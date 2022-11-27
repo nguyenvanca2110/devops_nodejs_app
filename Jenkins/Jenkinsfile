@@ -4,13 +4,18 @@ pipeline{
 
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('dockerhub_canv2110')
+		COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short=4 HEAD').trim()
+        BRANCH = "${env.GIT_BRANCH}"
+        TAG = "${env.BRANCH}.${env.COMMIT_HASH}.${env.BUILD_NUMBER}".drop(15)
+        DEV_TAG = "${env.BRANCH}.${env.COMMIT_HASH}.${env.BUILD_NUMBER}".drop(7)
+        VERSION = "${env.TAG}"
 	}
 
 	stages {
 
         stage('Docker build image') {
 			steps {
-				sh 'docker build -t nodeapp_app:1.0 .'
+				sh 'docker build -t canv2110/nodeapp_app:${env.BUILD_NUMBER} .'
 			}
 		}
 
@@ -23,7 +28,7 @@ pipeline{
 
 		stage('Docker image push') {
 			steps {
-				sh 'docker push nodeapp_app:1.0'
+				sh 'docker push canv2110/nodeapp_app:${env.BUILD_NUMBER}'
 			}
 		}
 	}
