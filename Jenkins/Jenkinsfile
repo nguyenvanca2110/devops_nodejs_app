@@ -10,8 +10,6 @@ pipeline{
 
         stage('Docker build image') {
 			steps {
-				sh 'cd ..'
-				sh 'pwd'
 				sh 'docker build -t canv2110/nodeapp_app:1.0 .'
 			}
 		}
