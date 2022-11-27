@@ -15,7 +15,7 @@ pipeline{
 
         stage('Docker build image') {
 			steps {
-				sh 'docker build -t canv2110/nodeapp_app:${env.BUILD_NUMBER} .'
+				sh 'docker build -t canv2110/nodeapp_app:$BUILD_TIMESTAMP .'
 			}
 		}
 
@@ -28,7 +28,7 @@ pipeline{
 
 		stage('Docker image push') {
 			steps {
-				sh 'docker push canv2110/nodeapp_app:${env.BUILD_NUMBER}'
+				sh 'docker push canv2110/nodeapp_app:$BUILD_TIMESTAMP'
 			}
 		}
 	}
