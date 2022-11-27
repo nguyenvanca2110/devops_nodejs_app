@@ -10,7 +10,7 @@ pipeline{
 
         stage('Docker build image') {
 			steps {
-				sh 'docker build -t canv2110/jenkins_image/nodeapp_app:1.0 .'
+				sh 'docker build -t nodeapp_app:1.0 .'
 			}
 		}
 
@@ -23,7 +23,7 @@ pipeline{
 
 		stage('Docker image push') {
 			steps {
-				sh 'docker push canv2110/jenkins_image/nodeapp_app:1.0'
+				sh 'docker push nodeapp_app:1.0'
 			}
 		}
 	}
