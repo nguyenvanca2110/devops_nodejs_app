@@ -1,43 +1,49 @@
-pipeline{
+pipeline {
+     agent any
+     
+        environment {
+    //once you create ACR in Azure cloud, use that here
+    registryName = "canvnodejsapp/nodeJSapp"
+    //- update your credentials ID after creating credentials for connecting to ACR
+    registryCredential = 'CaNV_ACR'
+    dockerImage = ''
+    registryUrl = 'canvnodejsapp.azurecr.io'
+  }
+    
+    stages {
 
-	agent any
+    stage ('Docker build image') {
+        steps {
+          //sh 'echo $'
+          sh 'docker build -t ${registryName}/nodeapp_app:$BUILD_TIMESTAMP .'
+      }
+    }
 
-	environment {
-		DOCKERHUB_CREDENTIALS=credentials('dockerhub_canv2110')
-		//COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short=4 HEAD').trim()
-        //BRANCH = "${env.GIT_BRANCH}"
-        //TAG = "${env.BRANCH}.${env.BUILD_NUMBER}".drop(15)
-        //DEV_TAG = "${env.BRANCH}.${env.BUILD_NUMBER}".drop(7)
-        //#VERSION = "${env.TAG}"
-	}
+    // Uploading Docker images into ACR
+    stage ('Upload Image to ACR') {
+     steps{   
+         script {
+          docker.withRegistry("http://${registryUrl}", registryCredential) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
 
-	stages {
+    // Stopping Docker containers for cleaner Docker run
+    stage ('stop previous containers') {
+         steps {
+            sh 'docker ps -f name=mypythonContainer -q | xargs --no-run-if-empty docker container stop'
+            sh 'docker container ls -a -fname=mypythonContainer -q | xargs -r docker container rm'
+      }
+    }
 
-        stage('Docker build image') {
-			steps {
-				sh 'docker build -t canv2110/nodeapp_app:$BUILD_TIMESTAMP .'
-			}
-		}
-
-		stage('Docker Hub Login') {
-			steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW'
-				//sh 'echo $BRANCH'   sh 'echo $TAG' sh 'echo $DEV_TAG'
-				sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-			}
-		}
-
-		stage('Docker image push') {
-			steps {
-				sh 'docker push canv2110/nodeapp_app:$BUILD_TIMESTAMP'
-			}
-		}
-	}
-
-	post {
-		always {
-			sh 'docker logout'
-		}
-	}
-
+    stage ('Docker Run') {
+     steps{
+         script {
+                sh 'docker run -d -p 8096:5000 --rm --name mypythonContainer ${registryUrl}/${registryName}'
+        }
+      }
+    }
+  }
 }
