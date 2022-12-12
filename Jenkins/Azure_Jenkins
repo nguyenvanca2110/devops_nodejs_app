@@ -3,7 +3,7 @@ pipeline {
      
         environment {
     //once you create ACR in Azure cloud, use that here
-    registryName = "canvnodejsapp/"
+    registryName = "canvnodejsapp"
     //- update your credentials ID after creating credentials for connecting to ACR
     registryCredential = 'CaNV_ACR'
     dockerImage = ''
