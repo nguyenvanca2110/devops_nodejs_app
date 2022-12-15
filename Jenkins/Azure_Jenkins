@@ -1,49 +1,43 @@
 pipeline {
-     agent any
-     
-        environment {
+  agent any
+  
+  environment {
     //once you create ACR in Azure cloud, use that here
-    registryName = "canvnodejsapp.azurecr.io"
+    registryAddress = "lsepocnodejs.azurecr.io"
     //- update your credentials ID after creating credentials for connecting to ACR
-    registryCredential = 'CaNV_ACR'
-    dockerImage = ''
-    registryUrl = 'canvnodejsapp.azurecr.io'
+     POC_ACR_CREDENTIALS = credentials('ACR_LSS_POC')
   }
-    
-    stages {
 
+
+
+  stages {
     stage ('Docker build image') {
         steps {
           //sh 'echo $'
-          sh 'docker build -t ${registryName}/nodeapp_app:$BUILD_TIMESTAMP .'
+          sh 'docker build -t ${registryAddress}/lsepocnodejs:$BUILD_TIMESTAMP .'
+      }
+    }
+
+    stage ('ACR Docker login') {
+        steps {
+          //sh 'echo $'
+          sh 'docker login $registryAddress -u POC_ACR_CREDENTIALS_USR -p POC_ACR_CREDENTIALS_PSW'
       }
     }
 
     // Uploading Docker images into ACR
-    stage ('Upload Image to ACR') {
-     steps{   
-         script {
-          docker.withRegistry("http://${registryUrl}", registryCredential) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
-
-    // Stopping Docker containers for cleaner Docker run
-    stage ('stop previous containers') {
-         steps {
-            sh 'docker ps -f name=mypythonContainer -q | xargs --no-run-if-empty docker container stop'
-            sh 'docker container ls -a -fname=mypythonContainer -q | xargs -r docker container rm'
-      }
-    }
-
-    stage ('Docker Run') {
+    stage ('Push Image to ACR') {
      steps{
-         script {
-                sh 'docker run -d -p 8096:5000 --rm --name mypythonContainer ${registryUrl}/${registryName}'
-        }
+      sh 'docker push ${registryAddress}/lsepocnodejs:$BUILD_TIMESTAMP'
       }
+    }
+
+  }
+
+  post {
+    always {
+      sh 'docker logout'
     }
   }
+
 }
