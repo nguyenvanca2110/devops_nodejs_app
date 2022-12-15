@@ -20,8 +20,8 @@ pipeline {
 
     stage ('ACR Docker login') {
         steps {
-          //sh 'echo $'
-          sh 'docker login $registryAddress -u POC_ACR_CREDENTIALS_USR -p POC_ACR_CREDENTIALS_PSW'
+          sh 'echo $'
+          sh 'docker login $registryAddress -u $POC_ACR_CREDENTIALS_USR -p $POC_ACR_CREDENTIALS_PSW'
       }
     }
 
