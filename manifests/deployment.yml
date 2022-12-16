@@ -1,19 +1,27 @@
-apiVersion : apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "canvaksdemo-c908"
+  name: lsepocnodejs-BE
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: "canvaksdemo-c908"
+      app: lsepoc
   template:
     metadata:
       labels:
-        app: "canvaksdemo-c908"
+        app: lsepoc
     spec:
       containers:
-        - name: "canvaksdemo-c908"
-          image: "21101992.azurecr.io/canvaksdemo"
-          ports:
-          - containerPort: 3000
+      - name: lsepoc-nodejs
+        image: lsepocnodejs.azurecr.io/lsepocnodejs:2022.12.16_05.09.54
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 3000
