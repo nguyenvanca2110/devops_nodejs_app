@@ -3,7 +3,11 @@ pipeline {
   
   environment {
     //once you create ACR in Azure cloud, use that here
+<<<<<<< HEAD
     ACR_REGISTRY_ADDRESS = "lsepocnodejs.azurecr.io"
+=======
+    REGISTRY_ADDRESS = "lsepocnodejs.azurecr.io"
+>>>>>>> eb0375b874c3a61eb761ef286a7b7999591c3ca7
     APPLICATION_NAME = "lsepocnodejs"
     //- update your credentials ID after creating credentials for connecting to ACR
      POC_ACR_CREDENTIALS = credentials('ACR_LSS_POC')
@@ -15,22 +19,34 @@ pipeline {
     stage ('Docker build image') {
         steps {
           //sh 'echo $'
+<<<<<<< HEAD
           sh ''
           sh 'docker build -t ${ACR_REGISTRY_ADDRESS}/$APPLICATION_NAME:$BUILD_TIMESTAMP .'
+=======
+          sh 'docker build -t ${REGISTRY_ADDRESS}/lsepocnodejs:$BUILD_TIMESTAMP .'
+>>>>>>> eb0375b874c3a61eb761ef286a7b7999591c3ca7
       }
     }
 
     stage ('ACR Docker login') {
         steps {
           sh 'echo $'
+<<<<<<< HEAD
           sh 'docker login $ACR_REGISTRY_ADDRESS -u $POC_ACR_CREDENTIALS_USR -p $POC_ACR_CREDENTIALS_PSW'
+=======
+          sh 'docker login $REGISTRY_ADDRESS -u $POC_ACR_CREDENTIALS_USR -p $POC_ACR_CREDENTIALS_PSW'
+>>>>>>> eb0375b874c3a61eb761ef286a7b7999591c3ca7
       }
     }
 
     // Uploading Docker images into ACR
     stage ('Push Image to ACR') {
      steps{
+<<<<<<< HEAD
       sh 'docker push ${ACR_REGISTRY_ADDRESS}/$APPLICATION_NAME:$BUILD_TIMESTAMP'
+=======
+      sh 'docker push ${REGISTRY_ADDRESS}/$APPLICATION_NAME:$BUILD_TIMESTAMP'
+>>>>>>> eb0375b874c3a61eb761ef286a7b7999591c3ca7
       }
     }
 
