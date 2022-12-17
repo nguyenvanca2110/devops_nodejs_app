@@ -8,17 +8,18 @@ pipeline {
     //- update your credentials ID after creating credentials for connecting to ACR
     POC_ACR_CREDENTIALS = credentials('LSE_POC_ACR')
   }
+  
   stages {
     stage ('Docker build image') {
         steps {
-          sh 'echo ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_TIMESTAMP'
-          sh 'docker build -t ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_TIMESTAMP .'
+          sh 'echo ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_NUMBER'
+          sh 'docker build -t ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_NUMBER .'
       }
     }
 
     stage ('ACR Docker login') {
         steps {
-          sh 'echo $BUILD_NUMBER'
+          sh 'echo $BUILD_TIMESTAMP'
           sh 'docker login $REGISTRY_ADDRESS -u $POC_ACR_CREDENTIALS_USR -p $POC_ACR_CREDENTIALS_PSW'
       }
     }
@@ -26,10 +27,9 @@ pipeline {
     // Uploading Docker images into ACR
     stage ('Push Image to ACR') {
      steps{
-      sh 'docker push ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_TIMESTAMP'
+      sh 'docker push ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_NUMBER'
       }
     }
-
   }
 
   post {
