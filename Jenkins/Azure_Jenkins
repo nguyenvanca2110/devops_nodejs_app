@@ -30,6 +30,11 @@ pipeline {
       sh 'docker push ${REGISTRY_ADDRESS}/$ACR_REGISTRY_NAME:$BUILD_NUMBER'
       }
     }
+    
+    stage {'Deploy Image from ACR to EKS'} {
+      steps {
+        sh 'echo 'Start to deploy the image''
+      }
   }
 
   post {
