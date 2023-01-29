@@ -16,7 +16,7 @@ pipeline{
         stage('Docker build image') {
 			steps {
 				sh 'echo "$PWD"'
-				sh 'docker build -t canv2110/nodeapp_app:$BUILD_TIMESTAMP .'
+				sh 'docker build -t canv2110/nodeapp_app:$BUILD_NUMBER .'
 			}
 		}
 
@@ -30,7 +30,7 @@ pipeline{
 
 		stage('Docker image push') {
 			steps {
-				sh 'docker push canv2110/nodeapp_app:$BUILD_TIMESTAMP'
+				sh 'docker push canv2110/nodeapp_app:$BUILD_NUMBER'
 			}
 		}
 	}
